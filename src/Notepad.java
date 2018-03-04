@@ -1,24 +1,18 @@
-//package p1;
+
 import java.io.*;
 import java.util.Date;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-//import p1.FontChooser;
-//import p1.FontDialog;
-//import p1.FindDialog;
-//import p1.LookAndFeelMenu;
-//import p1.MyFileFilter;
-/************************************/
+
 class FileOperation
 {
 Notepad npd;
-
 boolean saved;
 boolean newFileFlag;
 String fileName;
-String applicationTitle="Javapad";
+String applicationTitle="Group 3 Notepad";
 
 File fileRef;
 JFileChooser chooser;
@@ -284,15 +278,7 @@ if(fileHandler.confirmSave())System.exit(0);
 }
 };
 f.addWindowListener(frameClose);
-//////////////////
-/*
-ta.append("Hello dear hello hi");
-ta.append("\nwho are u dear mister hello");
-ta.append("\nhello bye hel");
-ta.append("\nHello");
-ta.append("\nMiss u mister hello hell");
-fileHandler.saved=true;
-*/
+
 }
 ////////////////////////////////////
 void goTo()
@@ -315,6 +301,61 @@ String cmdText=ev.getActionCommand();
 ////////////////////////////////////
 if(cmdText.equals(fileNew))
 	fileHandler.newFile();
+
+if(cmdText.equals("New Tab"))
+{
+	JFrame frame2=new JFrame(fileName+" - "+applicationName);
+	ta=new JTextArea(30,60);
+	statusBar=new JLabel("||       Ln 1, Col 1  ",JLabel.RIGHT);
+	frame2.add(new JScrollPane(ta),BorderLayout.CENTER);
+	frame2.add(statusBar,BorderLayout.SOUTH);
+	frame2.add(new JLabel("  "),BorderLayout.EAST);
+	frame2.add(new JLabel("  "),BorderLayout.WEST);
+	createMenuBar(frame2);
+	frame2.pack();
+	frame2.setLocation(300,90);
+	frame2.setVisible(true);
+	frame2.setDefaultCloseOperation(frame2.HIDE_ON_CLOSE);
+
+	fileHandler=new FileOperation(this);
+
+	ta.addCaretListener(
+	new CaretListener()
+	{
+	public void caretUpdate(CaretEvent e)
+	{
+	int lineNumber=0, column=0, pos=0;
+
+	try
+	{
+	pos=ta.getCaretPosition();
+	lineNumber=ta.getLineOfOffset(pos);
+	column=pos-ta.getLineStartOffset(lineNumber);
+	}catch(Exception excp){}
+	if(ta.getText().length()==0){lineNumber=0; column=0;}
+	statusBar.setText("||       Ln "+(lineNumber+1)+", Col "+(column+1));
+	}
+	});
+	//////////////////
+	DocumentListener myListener = new DocumentListener()
+	{
+	public void changedUpdate(DocumentEvent e){fileHandler.saved=false;}
+	public void removeUpdate(DocumentEvent e){fileHandler.saved=false;}
+	public void insertUpdate(DocumentEvent e){fileHandler.saved=false;}
+	};
+	ta.getDocument().addDocumentListener(myListener);
+	/////////
+	WindowListener frameClose=new WindowAdapter()
+	{
+	public void windowClosing(WindowEvent we)
+	{
+	if(fileHandler.confirmSave())System.exit(0);
+	}
+	};
+	f.addWindowListener(frameClose);
+
+	
+}
 else if(cmdText.equals(fileOpen))
 	fileHandler.openFile();
 ////////////////////////////////////
@@ -513,6 +554,7 @@ JMenu viewMenu=createMenu(viewText,KeyEvent.VK_V,mb);
 JMenu helpMenu=createMenu(helpText,KeyEvent.VK_H,mb);
 
 createMenuItem(fileNew,KeyEvent.VK_N,fileMenu,KeyEvent.VK_N,this);
+createMenuItem("New Tab",KeyEvent.VK_N,fileMenu,KeyEvent.VK_N,this);
 createMenuItem(fileOpen,KeyEvent.VK_O,fileMenu,KeyEvent.VK_O,this);
 createMenuItem(fileSave,KeyEvent.VK_S,fileMenu,KeyEvent.VK_S,this);
 createMenuItem(fileSaveAs,KeyEvent.VK_A,fileMenu,this);
