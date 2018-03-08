@@ -21,6 +21,7 @@ public class JNotepad extends JFrame implements ActionListener {
 
     JMenuBar bar = new JMenuBar();
     JTextArea jta = new JTextArea();
+    JLabel wordCount = new JLabel("");
     Font defFont;
     UndoManager undoRedoMan = new UndoManager();
     boolean saved = false;
@@ -30,7 +31,7 @@ public class JNotepad extends JFrame implements ActionListener {
     File viewHelp;
 
     //Need to set global
-    //used for find funtionality
+    //used for find functionality
     JDialog jd;
     JTextField findField;
     JCheckBox mCheckBox;
@@ -42,7 +43,7 @@ public class JNotepad extends JFrame implements ActionListener {
     //highlights the find word(s)
     Object lastHL;
 	Highlighter hl = jta.getHighlighter();
-	HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.pink);
+	HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
 		
     
     //used for redo and undo functionality
@@ -50,9 +51,10 @@ public class JNotepad extends JFrame implements ActionListener {
     JMenuItem redo;
 
     JNotepad(){
-
+    		
         setTitle("JNotepad");
         setLayout(new BorderLayout());
+        add(wordCount, BorderLayout.SOUTH);
         setSize(640,480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(new ImageIcon("JNotepad.png").getImage());
@@ -63,6 +65,8 @@ public class JNotepad extends JFrame implements ActionListener {
         ----------------------------------*/
         JMenu file = new JMenu("File");
         JMenuItem newFile = new JMenuItem("New");
+        JMenuItem newTab = new JMenuItem("New Tab");
+        //createMenuItem("New Tab",KeyEvent.VK_N,fileMenu,KeyEvent.VK_N,this);
         JMenuItem openFile = new JMenuItem("Open");
         JMenuItem saveFile = new JMenuItem("Save");
         JMenuItem saveAsFile = new JMenuItem("Save As");
@@ -81,14 +85,17 @@ public class JNotepad extends JFrame implements ActionListener {
         print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
 
         newFile.addActionListener(this);
+        newTab.addActionListener(this);
         openFile.addActionListener(this);
         saveFile.addActionListener(this);
         saveAsFile.addActionListener(this);
         print.addActionListener(this);
         pageSetup.addActionListener(this);
         exit.addActionListener(this);
+        
 
         file.add(newFile);
+        file.add(newTab);
         file.add(openFile);
         file.add(saveFile);
         file.add(saveAsFile);
@@ -222,9 +229,19 @@ public class JNotepad extends JFrame implements ActionListener {
         jta.addCaretListener(new CaretListener() {    
             public void caretUpdate(CaretEvent ce) { 
               String str = jta.getText();  
-              findIdx = jta.getCaretPosition(); 
+              findIdx = jta.getCaretPosition();
+              int lineNumber=0, column=0, pos=0;
+  			try
+  			{
+  			pos=jta.getCaretPosition();
+  			lineNumber=jta.getLineOfOffset(pos);
+  			column=pos-jta.getLineStartOffset(lineNumber);
+  			}catch(Exception excp){}
+  			if(jta.getText().length()==0){lineNumber=0; column=0;}
+  			wordCount.setText("||       Ln "+(lineNumber+1)+", Col "+(column+1));
             }    
           });
+        JLabel test = new JLabel("test");
         /*---------------------------------
             UNDO MANAGER FOR TEXT AREA
         ----------------------------------*/
@@ -245,6 +262,9 @@ public class JNotepad extends JFrame implements ActionListener {
         switch (e.getActionCommand()){
             case "New":
                 newFile();
+                break;
+            case "New Tab":
+                newTab();
                 break;
             case "Open":
                 openFile();
@@ -336,7 +356,7 @@ public class JNotepad extends JFrame implements ActionListener {
 
                 break;
             case "About JNotepad":
-                JOptionPane.showMessageDialog(this, "(C) Christian Valera 2016", "About JNotepad", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this,"Group 3", "About Notepad", JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
     }
@@ -374,6 +394,13 @@ public class JNotepad extends JFrame implements ActionListener {
             setTitle("JNotepad");
             saved = false;
         }
+    }
+    public void newTab() {
+    	JFrame frame2=new JNotepad();
+    	frame2.setDefaultCloseOperation(HIDE_ON_CLOSE);
+    	frame2.setLocation(100, 100);
+    	
+    			//(fileName+" - "+applicationName);
     }
     public void openFile() {
         JFileChooser jfc = new JFileChooser();
@@ -497,6 +524,9 @@ public class JNotepad extends JFrame implements ActionListener {
     	jd.getContentPane().add(buttonPanel,BorderLayout.SOUTH);
     	
     	//add actionlisteners to the checkbox and buttons
+    	
+    	
+    	
     	closeButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -720,6 +750,20 @@ class JFontChooser extends JDialog implements ListSelectionListener {
         newFont = new Font(currentFont, currentStyle, currentSize);
         //change the label to see what is looks like
         sampleLabel.setFont(newFont);
+    }
+    
+    public int getLineCountAsSeen(JTextArea txtComp) {
+    	Font font = txtComp.getFont();
+        FontMetrics fontMetrics = txtComp.getFontMetrics(font);
+        int fontHeight = fontMetrics.getHeight();
+        int lineCount;
+        try {
+        	int height = txtComp.modelToView(txtComp.getDocument().getEndPosition().getOffset() - 1).y;
+        	lineCount = height / fontHeight + 1;
+        } catch (Exception e) { 
+        	lineCount = 0;
+        }      
+        return lineCount;
     }
 }
 
