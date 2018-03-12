@@ -30,14 +30,22 @@ public class JNotepad extends JFrame implements ActionListener {
     JCheckBoxMenuItem wordWrap;
     JFontChooser fontChooser;
     File viewHelp;
+    
+    JButton reCloseButton = new JButton();
+    JCheckBox remCheckBox = new JCheckBox();
+    JTextField refindField = new JTextField();
+    boolean resensitive = false;
 
     //Need to set global
     //used for find functionality
     JDialog jd;
+    JDialog re;
     JTextField findField;
+    JTextField replaceField;
     JCheckBox mCheckBox;
     JButton closeButton;
     JButton findNextButton;
+    JButton replaceButton;
     JButton findButton;
     boolean sensitive;
     int findIdx;
@@ -336,6 +344,7 @@ public class JNotepad extends JFrame implements ActionListener {
             	goTo();
                 break;
             case "Replace":
+            	replace();
                 break;
             case "Select All":
                 jta.selectAll();
@@ -542,8 +551,115 @@ public class JNotepad extends JFrame implements ActionListener {
         undo.setEnabled(undoRedoMan.canUndo());
         redo.setEnabled(undoRedoMan.canRedo());
     }
-    public void find(){
+    
+    public void replace()
+    {
     	
+    	re = new JDialog(this,"Replace",false);
+    	re.setSize(300,150);
+    	re.getContentPane().setLayout(new BorderLayout());
+    	re.setLocationRelativeTo(this);
+    	//create the buttons and textfield that will be used for find and find next
+    	reCloseButton = new JButton("Close");
+    	replaceButton = new JButton("Replace");
+    	//findNextButton = new JButton("Find Next");
+    	remCheckBox = new JCheckBox("Match Case");
+    	refindField = new JTextField(15);
+    	replaceField = new JTextField(15);
+    	
+    	JPanel findPanel = new JPanel();
+    	JPanel buttonPanel = new JPanel();
+    	
+    	findPanel.setLayout(new FlowLayout());
+    	buttonPanel.setLayout(new GridLayout(1,3));
+    	
+    	//add the textfield and checkbox on this panel and 
+    	//add it to the centered of JDialod
+    	//refindField.setPreferredSize(new Dimension(400,20));
+    	findPanel.add(new JLabel("Find :                 "));
+    	findPanel.add(refindField);
+    	findPanel.add(new JLabel("Replace :           "));
+    	findPanel.add(replaceField);
+    	re.getContentPane().add(findPanel,BorderLayout.CENTER);
+    	//add the find next and close buttons
+    	buttonPanel.add(replaceButton);
+    	buttonPanel.add(reCloseButton);
+    	buttonPanel.add(remCheckBox);
+    	re.getContentPane().add(buttonPanel,BorderLayout.SOUTH);
+    	
+    	//sensitive = false;
+    	re.setVisible(true);
+    	
+    	reCloseButton.addActionListener(new ActionListener() {
+    		
+    		@Override
+    		public void actionPerformed(ActionEvent ae) {
+    			re.setVisible(false);
+    		}
+    	});
+    	
+    	remCheckBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if(remCheckBox.isSelected())
+					resensitive = true;
+				else
+					resensitive = false;
+			}
+		});
+    	
+    	replaceButton.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent ae) 
+			{
+				//get the text from textarea and textfield
+				String str;
+				String findStr;
+				String replaceStr;
+				//see if case sensitive
+				if(resensitive)
+				{
+					str = jta.getText();
+					findStr = refindField.getText();
+					replaceStr = replaceField.getText();
+				}
+				else
+				{
+					str = jta.getText().toLowerCase();
+					findStr = refindField.getText().toLowerCase();
+					replaceStr = replaceField.getText();
+				}
+				if(!str.equals(""))
+				{
+					if(str.contains(findStr))
+					{
+						String newStr = str.replaceAll(findStr,replaceStr);
+						jta.setText(newStr);
+					}
+					else 
+					{
+                        JOptionPane.showMessageDialog(null,"Not Found");
+                    }
+				}
+			}
+		});
+    	
+    }
+    
+    
+//    	if(cmdText.equals(editReplace))
+//        {
+//        if(Notepad.this.ta.getText().length()==0)
+//        	return;	// text box have no text
+//
+//        if(findReplaceDialog==null)
+//        	findReplaceDialog=new FindDialog(Notepad.this.ta);
+//        findReplaceDialog.showDialog(Notepad.this.f,false);//replace
+//    }
+    	
+    public void find()
+    {	
     	//creates a JDialog
     	jd = new JDialog(this,"Find",false);
     	jd.setSize(300,150);
@@ -613,7 +729,8 @@ public class JNotepad extends JFrame implements ActionListener {
 					if(idx > -1){
                         highlights(idx,findStr);
 					}
-                    else {
+                    else 
+                    {
                         JOptionPane.showMessageDialog(null,"Not Found");
                     }
 				}

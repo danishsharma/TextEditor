@@ -16,8 +16,4 @@ public class NewTabThread implements Runnable{
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-	
-
 }
