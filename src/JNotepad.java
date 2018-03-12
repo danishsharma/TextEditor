@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -14,11 +13,14 @@ import java.awt.print.PrinterException;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 
 public class JNotepad extends JFrame implements ActionListener {
 
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	static int count = 1;
     JMenuBar bar = new JMenuBar();
     JTextArea jta = new JTextArea();
@@ -30,7 +32,7 @@ public class JNotepad extends JFrame implements ActionListener {
     JCheckBoxMenuItem wordWrap;
     JFontChooser fontChooser;
     File viewHelp;
-    
+
     JButton reCloseButton = new JButton();
     JCheckBox remCheckBox = new JCheckBox();
     JTextField refindField = new JTextField();
@@ -39,7 +41,7 @@ public class JNotepad extends JFrame implements ActionListener {
     //Need to set global
     //used for find functionality
     JDialog jd;
-    JDialog re;
+    static JDialog re;
     JTextField findField;
     JTextField replaceField;
     JCheckBox mCheckBox;
@@ -51,28 +53,28 @@ public class JNotepad extends JFrame implements ActionListener {
     int findIdx;
     //highlights the find word(s)
     Object lastHL;
-	Highlighter hl = jta.getHighlighter();
-	HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
-		
-    
+    Highlighter hl = jta.getHighlighter();
+    HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.GRAY);
+
+
     //used for redo and undo functionality
     JMenuItem undo;
     JMenuItem redo;
 
-    JNotepad(){
-    		
-        setTitle("JNotepad");
+    JNotepad() {
+
+        setTitle("Notepad" + count);
         setLayout(new BorderLayout());
         add(wordCount, BorderLayout.SOUTH);
-        setSize(640,480);
+        setSize(640, 480);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                if (JOptionPane.showConfirmDialog(null, 
-                    "Are you sure to close this window?", "Really Closing?", 
-                    JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                if (JOptionPane.showConfirmDialog(null,
+                        "Are you sure to close this window?", "Really Closing?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
                     dispose();
                 }
             }
@@ -94,16 +96,16 @@ public class JNotepad extends JFrame implements ActionListener {
         //JMenuItem pageSetup = new JMenuItem("Page Setup");
         JMenuItem print = new JMenuItem("Print");
         JMenuItem exit = new JMenuItem("Exit");
-
+        
         file.setMnemonic('F');
         newFile.setMnemonic('N');
-       // pageSetup.setMnemonic('u');
+        // pageSetup.setMnemonic('u');
         exit.setMnemonic('x');
 
-        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_MASK));
-        openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_MASK));
-        saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_MASK));
-        print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_MASK));
+        newFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        openFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        saveFile.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         newFile.addActionListener(this);
         newTab.addActionListener(this);
@@ -113,7 +115,7 @@ public class JNotepad extends JFrame implements ActionListener {
         print.addActionListener(this);
         //pageSetup.addActionListener(this);
         exit.addActionListener(this);
-        
+
 
         file.add(newFile);
         file.add(newTab);
@@ -137,24 +139,24 @@ public class JNotepad extends JFrame implements ActionListener {
         JMenuItem copy = new JMenuItem("Copy");
         JMenuItem paste = new JMenuItem("Paste");
         //JMenuItem delete = new JMenuItem("Delete");
-        JMenuItem find  = new JMenuItem("Find");
+        JMenuItem find = new JMenuItem("Find");
         JMenuItem findNext = new JMenuItem("Find Next");
         JMenuItem replace = new JMenuItem("Replace");
         JMenuItem gotoEdit = new JMenuItem("Go To");
         JMenuItem selectAll = new JMenuItem("Select All");
         JMenuItem timeDate = new JMenuItem("Time/Date");
 
-        undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
-        redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_MASK));
-        cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
-        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
-        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
-       // delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_MASK));
-        replace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_MASK));
-        gotoEdit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, InputEvent.CTRL_MASK));
-        selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, InputEvent.CTRL_MASK));
-        timeDate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
+        undo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        redo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        //delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        find.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        replace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        gotoEdit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        selectAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        timeDate.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
         undo.setEnabled(false);
         redo.setEnabled(false);
@@ -178,7 +180,7 @@ public class JNotepad extends JFrame implements ActionListener {
         edit.add(cut);
         edit.add(copy);
         edit.add(paste);
-       // edit.add(delete);
+        // edit.add(delete);
         edit.addSeparator();
         edit.add(find);
         edit.add(findNext);
@@ -210,19 +212,19 @@ public class JNotepad extends JFrame implements ActionListener {
             VIEW MENU
         ----------------------------------*/
         JMenu view = new JMenu("View");
-        JCheckBoxMenuItem statusBar = new JCheckBoxMenuItem("Line Count",true);
+        JCheckBoxMenuItem statusBar = new JCheckBoxMenuItem("Line Count", true);
         view.setMnemonic('V');
         statusBar.setMnemonic('S');
         //statusBar.addActionListener(this);
         view.add(statusBar);
-    		statusBar.addActionListener(new ActionListener() {
-    		
-    		@Override
-    		public void actionPerformed(ActionEvent ev) {
-    			JCheckBoxMenuItem temp=(JCheckBoxMenuItem)ev.getSource();
-            	wordCount.setVisible(temp.isSelected());
-    		}
-    	});
+        statusBar.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                JCheckBoxMenuItem temp = (JCheckBoxMenuItem) ev.getSource();
+                wordCount.setVisible(temp.isSelected());
+            }
+        });
 
         /*---------------------------------
             HELP MENU
@@ -252,24 +254,26 @@ public class JNotepad extends JFrame implements ActionListener {
             DEFAULT TEXT AREA
         ----------------------------------*/
         fontChooser = new JFontChooser(this);
-        jta.setFont(new Font("Courier",Font.PLAIN,12));
+        jta.setFont(new Font("Courier", Font.PLAIN, 12));
         jta.setWrapStyleWord(true);
         JScrollPane scrollPane = new JScrollPane(jta);
-        jta.addCaretListener(new CaretListener() {    
-            public void caretUpdate(CaretEvent ce) { 
-              String str = jta.getText();  
-              findIdx = jta.getCaretPosition();
-              int lineNumber=0, column=0, pos=0;
-  			try
-  			{
-  			pos=jta.getCaretPosition();
-  			lineNumber=jta.getLineOfOffset(pos);
-  			column=pos-jta.getLineStartOffset(lineNumber);
-  			}catch(Exception excp){}
-  			if(jta.getText().length()==0){lineNumber=0; column=0;}
-  			wordCount.setText("||       Ln "+(lineNumber+1)+", Col "+(column+1));
-            }    
-          });
+        jta.addCaretListener(new CaretListener() {
+            public void caretUpdate(CaretEvent ce) {
+                String str = jta.getText();
+                findIdx = jta.getCaretPosition();
+                int lineNumber = 0, column = 0, pos = 0;
+                try {
+                    pos = jta.getCaretPosition();
+                    lineNumber = jta.getLineOfOffset(pos);
+                    column = pos - jta.getLineStartOffset(lineNumber);
+                } catch (Exception excp) {}
+                if (jta.getText().length() == 0) {
+                    lineNumber = 0;
+                    column = 0;
+                }
+                wordCount.setText("||       Ln " + (lineNumber + 1) + ", Col " + (column + 1));
+            }
+        });
         JLabel test = new JLabel("test");
         /*---------------------------------
             UNDO MANAGER FOR TEXT AREA
@@ -288,7 +292,7 @@ public class JNotepad extends JFrame implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()){
+        switch (e.getActionCommand()) {
             case "New":
                 newFile();
                 break;
@@ -304,9 +308,9 @@ public class JNotepad extends JFrame implements ActionListener {
             case "Save As":
                 saveAs();
                 break;
-           // case "Page Setup":
-            //    print();
-             //   break;
+                // case "Page Setup":
+                //    print();
+                //   break;
             case "Print":
                 print();
                 break;
@@ -331,20 +335,20 @@ public class JNotepad extends JFrame implements ActionListener {
             case "Paste":
                 jta.paste();
                 break;
-            //case "Delete":
-             //   jta.setText(jta.getText().replace(jta.getSelectedText(),""));
-               // break;
+                //case "Delete":
+                //   jta.setText(jta.getText().replace(jta.getSelectedText(),""));
+                // break;
             case "Find":
-            	find();
+                find();
                 break;
             case "Find Next":
-            	find();
+                find();
                 break;
             case "Go To":
-            	goTo();
+                goTo();
                 break;
             case "Replace":
-            	replace();
+                replace();
                 break;
             case "Select All":
                 jta.selectAll();
@@ -354,31 +358,31 @@ public class JNotepad extends JFrame implements ActionListener {
                 jta.append(dateFormat.format(new Date(e.getWhen())));
                 break;
             case "Word Wrap":
-                if(wordWrap.getState())
+                if (wordWrap.getState())
                     jta.setLineWrap(true);
                 else
                     jta.setLineWrap(false);
                 break;
             case "Font":
                 fontChooser.setVisible(true);
-                if(fontChooser.isNewFont){
+                if (fontChooser.isNewFont) {
                     jta.setFont(fontChooser.getNewFont());
                 }
                 break;
             case "Foreground Color":
-                Color c = JColorChooser.showDialog(null,"Choose a color",jta.getForeground());
+                Color c = JColorChooser.showDialog(null, "Choose a color", jta.getForeground());
                 //JColorChooser.sh
-            	//Color c = new Color(255,0,0);
-                if(c != null)
+                //Color c = new Color(255,0,0);
+                if (c != null)
                     jta.setForeground(c);
                 break;
-           // case "Line Count":
-            //	showLineCount();
-             //   break;
+                // case "Line Count":
+                //	showLineCount();
+                //   break;
             case "View Help":
                 viewHelp = new File("/Users/danishs/Desktop/help.txt");
                 //this will open the file if it exist
-                if(viewHelp.exists()){
+                if (viewHelp.exists()) {
                     try {
                         Desktop.getDesktop().open(viewHelp);
                     } catch (IOException e1) {
@@ -388,28 +392,28 @@ public class JNotepad extends JFrame implements ActionListener {
 
                 break;
             case "About JNotepad":
-                JOptionPane.showMessageDialog(this,"JAVA SWINGS ROCKS!!!!", "About Notepad", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "JAVA SWINGS ROCKS!!!!", "About Notepad", JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
     }
-    
+
     void showLineCount() {
-    	
+
     }
     //use the text pane print method
     //copy the content of the jtextarea to textpant
     //used by print and page setup
-    public void print(){
+    public void print() {
         JTextPane tempPane = new JTextPane();
         tempPane.setEditorKit(new HTMLEditorKit());
         tempPane.setText(jta.getText());
 
         try {
             boolean printed = tempPane.print();
-            if(printed)
-                JOptionPane.showMessageDialog(null,"Finished Printing");
+            if (printed)
+                JOptionPane.showMessageDialog(null, "Finished Printing");
             else
-                JOptionPane.showMessageDialog(null,"Cancelled Printing");
+                JOptionPane.showMessageDialog(null, "Cancelled Printing");
 
         } catch (PrinterException e) {
             e.printStackTrace();
@@ -417,48 +421,51 @@ public class JNotepad extends JFrame implements ActionListener {
 
     }
     public void goTo() {
-    	int lineNumber=0;
-    	try
-    	{
-    	lineNumber=jta.getLineOfOffset(jta.getCaretPosition())+1;
-    	String tempStr=JOptionPane.showInputDialog(null,"Enter Line Number:",""+lineNumber);
-    	if(tempStr==null)
-    		{return;}
-    	lineNumber=Integer.parseInt(tempStr);
-    jta.setCaretPosition(jta.getLineStartOffset(lineNumber-1));
-    	}catch(Exception e){}
+        int lineNumber = 0;
+        try {
+            lineNumber = jta.getLineOfOffset(jta.getCaretPosition()) + 1;
+            String tempStr = JOptionPane.showInputDialog(null, "Enter Line Number:", "" + lineNumber);
+            if (tempStr == null) {
+                return;
+            }
+            lineNumber = Integer.parseInt(tempStr);
+            jta.setCaretPosition(jta.getLineStartOffset(lineNumber - 1));
+        } catch (Exception e) {}
     }
-    public void newFile(){
+    public void newFile() {
         //when creating a new file, see if user wants to save the current document
-        Object[] options = {"Save","Discard","Cancel"};
+        Object[] options = {
+            "Save",
+            "Discard",
+            "Cancel"
+        };
         JOptionPane optionsPane = new JOptionPane();
         JDialog j = optionsPane.createDialog(this, "Title");
-        int choice = optionsPane.showOptionDialog(null,"Would you like to save changes to the document?","New",
-                JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE,null,options,"Save");
+        int choice = optionsPane.showOptionDialog(null, "Would you like to save changes to the document?", "New",
+            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, "Save");
         //go to save method if user select save.
-        
-        if (choice == 0){
+
+        if (choice == 0) {
             save();
-        }
-        else if(choice == 1){
+        } else if (choice == 1) {
             jta.setText("");
-            setTitle("JNotepad");
+            setTitle("Notepad" + count);
             saved = false;
             this.dispose();
-         
-            
+
+
         }
-        
+
     }
     public void newTab() {
-    	
-    	/*JFrame frame2 = new JNotepad();
-    	frame2.setDefaultCloseOperation(HIDE_ON_CLOSE);
-    	frame2.setLocation(100, 100);
-    	*/
-    	Thread t = new Thread(new NewTabThread());
-    	t.start();
-    	count++;
+
+        /*JFrame frame2 = new JNotepad();
+        frame2.setDefaultCloseOperation(HIDE_ON_CLOSE);
+        frame2.setLocation(100, 100);
+        */
+        Thread t = new Thread(new NewTabThread());
+        t.start();
+        count++;
     }
     public void openFile() {
         JFileChooser jfc = new JFileChooser();
@@ -477,15 +484,15 @@ public class JNotepad extends JFrame implements ActionListener {
                     jta.append(str + "\n");
                     //System.out.println();
                 }
-            }catch(IOException ex){
+            } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
         saved = true;
     }
-    public void save(){
+    public void save() {
         //it will run the saveAs function if its first time saving.
-        if(!saved){
+        if (!saved) {
             saveAs();
         }
         //otherwise it will update the file.
@@ -499,37 +506,35 @@ public class JNotepad extends JFrame implements ActionListener {
         }
         saved = true;
     }
-    public void saveAs(){
+    public void saveAs() {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Save As");
         //create filter for java and txt extensions
         FileNameExtensionFilter txt = new FileNameExtensionFilter("Text Files", "txt");
         jFileChooser.addChoosableFileFilter(txt);
-        if(jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION){
+        if (jFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             currentFile = jFileChooser.getSelectedFile();
             //check if the filename specified have a extension
             //if none, add to it
-            if(!currentFile.getAbsolutePath().endsWith(".txt"))
+            if (!currentFile.getAbsolutePath().endsWith(".txt"))
                 currentFile = new File(currentFile.getAbsolutePath() + ".txt");
-            if(currentFile.exists()) {
+            if (currentFile.exists()) {
                 //if file already exist
                 //this will check if user wants to overwrite the document
                 int overwrite = JOptionPane.showConfirmDialog(null, "Do you want to overwrite the existing file?",
-                        "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    "Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (overwrite != JOptionPane.YES_OPTION) {
                     saved = false;
-                }
-                else {
+                } else {
                     writeToFile();
                     saved = true;
                 }
-            }
-            else {
+            } else {
                 writeToFile();
             }
         }
     }
-    public void writeToFile(){
+    public void writeToFile() {
         //its a new document so make the file
         try {
             FileWriter fw = new FileWriter(currentFile.getAbsolutePath());
@@ -542,229 +547,209 @@ public class JNotepad extends JFrame implements ActionListener {
         //make sure to only update from now on
         saved = false;
         //update the title of the frame
-        setTitle(currentFile.getName() + " - JNotepad");
+        setTitle(currentFile.getName() + " - Notepad" + count);
     }
 
     //this will update the menu item to have the redo
     //and undo to be visible or not.
-    public void UndoRedo(){
+    public void UndoRedo() {
         undo.setEnabled(undoRedoMan.canUndo());
         redo.setEnabled(undoRedoMan.canRedo());
     }
-    
-    public void replace()
-    {
-    	
-    	re = new JDialog(this,"Replace",false);
-    	re.setSize(300,150);
-    	re.getContentPane().setLayout(new BorderLayout());
-    	re.setLocationRelativeTo(this);
-    	//create the buttons and textfield that will be used for find and find next
-    	reCloseButton = new JButton("Close");
-    	replaceButton = new JButton("Replace");
-    	//findNextButton = new JButton("Find Next");
-    	remCheckBox = new JCheckBox("Match Case");
-    	refindField = new JTextField(15);
-    	replaceField = new JTextField(15);
-    	
-    	JPanel findPanel = new JPanel();
-    	JPanel buttonPanel = new JPanel();
-    	
-    	findPanel.setLayout(new FlowLayout());
-    	buttonPanel.setLayout(new GridLayout(1,3));
-    	
-    	//add the textfield and checkbox on this panel and 
-    	//add it to the centered of JDialod
-    	//refindField.setPreferredSize(new Dimension(400,20));
-    	findPanel.add(new JLabel("Find :                 "));
-    	findPanel.add(refindField);
-    	findPanel.add(new JLabel("Replace :           "));
-    	findPanel.add(replaceField);
-    	re.getContentPane().add(findPanel,BorderLayout.CENTER);
-    	//add the find next and close buttons
-    	buttonPanel.add(replaceButton);
-    	buttonPanel.add(reCloseButton);
-    	buttonPanel.add(remCheckBox);
-    	re.getContentPane().add(buttonPanel,BorderLayout.SOUTH);
-    	
-    	//sensitive = false;
-    	re.setVisible(true);
-    	
-    	reCloseButton.addActionListener(new ActionListener() {
-    		
-    		@Override
-    		public void actionPerformed(ActionEvent ae) {
-    			re.setVisible(false);
-    		}
-    	});
-    	
-    	remCheckBox.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				if(remCheckBox.isSelected())
-					resensitive = true;
-				else
-					resensitive = false;
-			}
-		});
-    	
-    	replaceButton.addActionListener(new ActionListener() {	
-			@Override
-			public void actionPerformed(ActionEvent ae) 
-			{
-				//get the text from textarea and textfield
-				String str;
-				String findStr;
-				String replaceStr;
-				//see if case sensitive
-				if(resensitive)
-				{
-					str = jta.getText();
-					findStr = refindField.getText();
-					replaceStr = replaceField.getText();
-				}
-				else
-				{
-					str = jta.getText().toLowerCase();
-					findStr = refindField.getText().toLowerCase();
-					replaceStr = replaceField.getText();
-				}
-				if(!str.equals(""))
-				{
-					if(str.contains(findStr))
-					{
-						String newStr = str.replaceAll(findStr,replaceStr);
-						jta.setText(newStr);
-					}
-					else 
-					{
-                        JOptionPane.showMessageDialog(null,"Not Found");
-                    }
-				}
-			}
-		});
-    	
-    }
-    
-    
-//    	if(cmdText.equals(editReplace))
-//        {
-//        if(Notepad.this.ta.getText().length()==0)
-//        	return;	// text box have no text
-//
-//        if(findReplaceDialog==null)
-//        	findReplaceDialog=new FindDialog(Notepad.this.ta);
-//        findReplaceDialog.showDialog(Notepad.this.f,false);//replace
-//    }
-    	
-    public void find()
-    {	
-    	//creates a JDialog
-    	jd = new JDialog(this,"Find",false);
-    	jd.setSize(300,150);
-    	jd.getContentPane().setLayout(new BorderLayout());
-    	jd.setLocationRelativeTo(this);
-    	//create the buttons and textfield that will be used for find and find next
-    	closeButton = new JButton("Close");
-    	findButton = new JButton("Find");
-    	findNextButton = new JButton("Find Next");
-    	mCheckBox = new JCheckBox("Match Case");
-    	findField = new JTextField(15);
-    	//create a panels needed for the dialog
-    	JPanel findPanel = new JPanel();
-    	JPanel buttonPanel = new JPanel();
-    	findPanel.setLayout(new FlowLayout());
-    	buttonPanel.setLayout(new GridLayout(1,3));
-    	//add the textfield and checkbox on this panel and 
-    	//add it to the centered of JDialod
-    	findPanel.add(new JLabel("Find: "));
-    	findPanel.add(findField);
-    	findPanel.add(mCheckBox);
-    	jd.getContentPane().add(findPanel,BorderLayout.CENTER);
-    	//add the find next and close buttons
-    	buttonPanel.add(findButton);
-    	buttonPanel.add(findNextButton);
-    	buttonPanel.add(closeButton);
-    	jd.getContentPane().add(buttonPanel,BorderLayout.SOUTH);
-    	
-    	//add actionlisteners to the checkbox and buttons
-    	
-    	
 
-    	closeButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				jd.setVisible(false);
-			}
-		});
-    	mCheckBox.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				if(mCheckBox.isSelected())
-					sensitive = true;
-				else
-					sensitive = false;
-			}
-		});
-    	findNextButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				//get the text from textarea and textfield
-				String str = jta.getText().toLowerCase();
-				String findStr = findField.getText().toLowerCase();
-				//see if case sensitive
-				if(sensitive)
-				{
-					str = jta.getText();
-					findStr = findField.getText();
-				}
-				if(!str.equals("")){
-					if(lastHL!= null)
-						hl.removeHighlight(lastHL);
-					int idx = str.indexOf(findStr,findIdx+1);
-					if(idx > -1){
-                        highlights(idx,findStr);
-					}
-                    else 
-                    {
-                        JOptionPane.showMessageDialog(null,"Not Found");
+    public void replace() {
+
+        re = new JDialog(this, "Replace", false);
+        re.setSize(320, 150);
+        re.getContentPane().setLayout(new BorderLayout());
+        re.setLocationRelativeTo(this);
+        //create the buttons and textfield that will be used for find and find next
+        reCloseButton = new JButton("Close");
+        replaceButton = new JButton("Replace");
+        //findNextButton = new JButton("Find Next");
+        remCheckBox = new JCheckBox("Match Case");
+        refindField = new JTextField(15);
+        replaceField = new JTextField(15);
+
+        JPanel findPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+
+        findPanel.setLayout(new FlowLayout());
+        buttonPanel.setLayout(new GridLayout(1, 3));
+
+        //add the textfield and checkbox on this panel and 
+        //add it to the centered of JDialod
+        //refindField.setPreferredSize(new Dimension(400,20));
+        findPanel.add(new JLabel("Find :                 "));
+        findPanel.add(refindField);
+        findPanel.add(new JLabel("Replace :           "));
+        findPanel.add(replaceField);
+        re.getContentPane().add(findPanel, BorderLayout.CENTER);
+        //add the find next and close buttons
+        buttonPanel.add(replaceButton);
+        buttonPanel.add(reCloseButton);
+        buttonPanel.add(remCheckBox);
+        re.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+        //sensitive = false;
+        re.setVisible(true);
+
+        reCloseButton.addActionListener(new ButtonListener());
+
+        remCheckBox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (remCheckBox.isSelected())
+                    resensitive = true;
+                else
+                    resensitive = false;
+            }
+        });
+
+        replaceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                //get the text from textarea and textfield
+                String str;
+                String findStr;
+                String replaceStr;
+                //see if case sensitive
+                if (resensitive) {
+                    str = jta.getText();
+                    findStr = refindField.getText();
+                    replaceStr = replaceField.getText();
+                } else {
+                    str = jta.getText().toLowerCase();
+                    findStr = refindField.getText().toLowerCase();
+                    replaceStr = replaceField.getText();
+                }
+                if (!str.equals("")) {
+                    if (str.contains(findStr)) {
+                        String newStr = str.replaceAll(findStr, replaceStr);
+                        jta.setText(newStr);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Not Found");
                     }
-				}
-			}
-		});
-    	findButton.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				//get the text from textarea and textfield
-				String str = jta.getText().toLowerCase();
-				String findStr = findField.getText().toLowerCase();
-				//see if case sensitive
-				if(sensitive)
-				{
-					str = jta.getText();
-					findStr = findField.getText();
-				}
-				if(!str.equals("")){
-					if(lastHL!= null)
-						hl.removeHighlight(lastHL);
-					int idx = str.indexOf(findStr,0);
-					if(idx > -1) {
-						highlights(idx,findStr);
-					}  else {
-                        JOptionPane.showMessageDialog(null,"Not Found");
+                }
+            }
+        });
+
+    }
+
+
+    //    	if(cmdText.equals(editReplace))
+    //        {
+    //        if(Notepad.this.ta.getText().length()==0)
+    //        	return;	// text box have no text
+    //
+    //        if(findReplaceDialog==null)
+    //        	findReplaceDialog=new FindDialog(Notepad.this.ta);
+    //        findReplaceDialog.showDialog(Notepad.this.f,false);//replace
+    //    }
+
+    public void find() {
+        //creates a JDialog
+        jd = new JDialog(this, "Find", false);
+        jd.setSize(300, 150);
+        jd.getContentPane().setLayout(new BorderLayout());
+        jd.setLocationRelativeTo(this);
+        //create the buttons and textfield that will be used for find and find next
+        closeButton = new JButton("Close");
+        findButton = new JButton("Find");
+        findNextButton = new JButton("Find Next");
+        mCheckBox = new JCheckBox("Match Case");
+        findField = new JTextField(15);
+        //create a panels needed for the dialog
+        JPanel findPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+        findPanel.setLayout(new FlowLayout());
+        buttonPanel.setLayout(new GridLayout(1, 3));
+        //add the textfield and checkbox on this panel and 
+        //add it to the centered of JDialod
+        findPanel.add(new JLabel("Find: "));
+        findPanel.add(findField);
+        findPanel.add(mCheckBox);
+        jd.getContentPane().add(findPanel, BorderLayout.CENTER);
+        //add the find next and close buttons
+        buttonPanel.add(findButton);
+        buttonPanel.add(findNextButton);
+        buttonPanel.add(closeButton);
+        jd.getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+
+        //add actionlisteners to the checkbox and buttons
+
+
+
+        closeButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                jd.setVisible(false);
+            }
+        });
+        mCheckBox.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                if (mCheckBox.isSelected())
+                    sensitive = true;
+                else
+                    sensitive = false;
+            }
+        });
+        findNextButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                //get the text from textarea and textfield
+                String str = jta.getText().toLowerCase();
+                String findStr = findField.getText().toLowerCase();
+                //see if case sensitive
+                if (sensitive) {
+                    str = jta.getText();
+                    findStr = findField.getText();
+                }
+                if (!str.equals("")) {
+                    if (lastHL != null)
+                        hl.removeHighlight(lastHL);
+                    int idx = str.indexOf(findStr, findIdx + 1);
+                    if (idx > -1) {
+                        highlights(idx, findStr);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Not Found");
                     }
-				}
-			}
-		});
-    	jd.setVisible(true);
+                }
+            }
+        });
+        findButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                //get the text from textarea and textfield
+                String str = jta.getText().toLowerCase();
+                String findStr = findField.getText().toLowerCase();
+                //see if case sensitive
+                if (sensitive) {
+                    str = jta.getText();
+                    findStr = findField.getText();
+                }
+                if (!str.equals("")) {
+                    if (lastHL != null)
+                        hl.removeHighlight(lastHL);
+                    int idx = str.indexOf(findStr, 0);
+                    if (idx > -1) {
+                        highlights(idx, findStr);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Not Found");
+                    }
+                }
+            }
+        });
+        jd.setVisible(true);
     }
     //get the current index then the last word of the found string and highlight it
-    public void highlights(int idx,String findStr){
+    public void highlights(int idx, String findStr) {
         jta.setCaretPosition(idx);
         findIdx = idx;
         int startHL = jta.getCaretPosition();
