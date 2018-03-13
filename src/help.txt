@@ -1,0 +1,40 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf100
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 This is a help file.\
+\
+File Menu:\
+1. Press cmd + N to create new File.\
+2. Press cmd + S to Save the opened File.\
+3. Press cmd + P to Save the opened File.\
+4. Press cmd + O to open a file.\
+\
+Edit Menu:\
+1. Press cmd + Z to undo.\
+2. Press cmd + Y to redo.\
+3. Press cmd + C to copy selected text.\
+4. Press cmd + V to paste selected text..\
+5. Press cmd + X to cut selected text.\
+6. Press cmd + A to select all text.\
+7. Press cmd + T to get current date and time.\
+7. Press cmd + F to find certain text.\
+7. Press cmd + R to replace certain text.\
+7. Press cmd + G to take cursor to a specific line number.\
+\
+Format Menu:\
+1. Word wrap makes the text wrap to the size of the window.\
+2. Font will change the style of the text Area.\
+3. Foreground Color helps set the color of the text.\
+\
+View Menu:\
+1. Show/Hide Line, column count.\
+\
+Please contact for any further help.\
+\
+- GROUP 3.\
+\
+}

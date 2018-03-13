@@ -138,7 +138,6 @@ public class JNotepad extends JFrame implements ActionListener {
         JMenuItem cut = new JMenuItem("Cut");
         JMenuItem copy = new JMenuItem("Copy");
         JMenuItem paste = new JMenuItem("Paste");
-        //JMenuItem delete = new JMenuItem("Delete");
         JMenuItem find = new JMenuItem("Find");
         JMenuItem findNext = new JMenuItem("Find Next");
         JMenuItem replace = new JMenuItem("Replace");
@@ -180,7 +179,6 @@ public class JNotepad extends JFrame implements ActionListener {
         edit.add(cut);
         edit.add(copy);
         edit.add(paste);
-        // edit.add(delete);
         edit.addSeparator();
         edit.add(find);
         edit.add(findNext);
@@ -198,27 +196,29 @@ public class JNotepad extends JFrame implements ActionListener {
         wordWrap = new JCheckBoxMenuItem("Word Wrap");
         JMenuItem font = new JMenuItem("Font");
         JMenuItem foreground = new JMenuItem("Foreground Color");
+        JMenuItem background = new JMenuItem("Background Color");
         format.setMnemonic('o');
         wordWrap.setMnemonic('W');
         font.setMnemonic('F');
         wordWrap.addActionListener(this);
         font.addActionListener(this);
         foreground.addActionListener(this);
+        background.addActionListener(this);
         format.add(wordWrap);
         format.add(font);
         format.add(foreground);
+        format.add(background);
 
         /*---------------------------------
             VIEW MENU
         ----------------------------------*/
         JMenu view = new JMenu("View");
-        JCheckBoxMenuItem statusBar = new JCheckBoxMenuItem("Line Count", true);
+        JCheckBoxMenuItem LineCountBar = new JCheckBoxMenuItem("Line Count", true);
         view.setMnemonic('V');
-        statusBar.setMnemonic('S');
-        //statusBar.addActionListener(this);
-        view.add(statusBar);
-        statusBar.addActionListener(new ActionListener() {
-
+        //LineCountBar.setMnemonic('S');
+        //LineCountBar.addActionListener(this);
+        view.add(LineCountBar);
+        LineCountBar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JCheckBoxMenuItem temp = (JCheckBoxMenuItem) ev.getSource();
@@ -231,12 +231,12 @@ public class JNotepad extends JFrame implements ActionListener {
         ----------------------------------*/
         JMenu help = new JMenu("Help");
         JMenuItem viewHelp = new JMenuItem("View Help");
-        JMenuItem about = new JMenuItem("About JNotepad");
+        JMenuItem about = new JMenuItem("About Notepad");
         help.setMnemonic('H');
         viewHelp.setMnemonic('H');
         viewHelp.addActionListener(this);
         about.addActionListener(this);
-        view.add(statusBar);
+        view.add(LineCountBar);
         help.add(viewHelp);
         help.add(about);
 
@@ -379,6 +379,11 @@ public class JNotepad extends JFrame implements ActionListener {
                 // case "Line Count":
                 //	showLineCount();
                 //   break;
+            case "Background Color":
+                Color c1 = JColorChooser.showDialog(null, "Choose a color", jta.getForeground());
+                if (c1 != null)
+                    jta.setBackground(c1);
+                break;
             case "View Help":
                 viewHelp = new File("/Users/danishs/Desktop/help.txt");
                 //this will open the file if it exist
@@ -391,7 +396,7 @@ public class JNotepad extends JFrame implements ActionListener {
                 }
 
                 break;
-            case "About JNotepad":
+            case "About Notepad":
                 JOptionPane.showMessageDialog(this, "JAVA SWINGS ROCKS!!!!", "About Notepad", JOptionPane.INFORMATION_MESSAGE);
                 break;
         }
@@ -636,17 +641,6 @@ public class JNotepad extends JFrame implements ActionListener {
         });
 
     }
-
-
-    //    	if(cmdText.equals(editReplace))
-    //        {
-    //        if(Notepad.this.ta.getText().length()==0)
-    //        	return;	// text box have no text
-    //
-    //        if(findReplaceDialog==null)
-    //        	findReplaceDialog=new FindDialog(Notepad.this.ta);
-    //        findReplaceDialog.showDialog(Notepad.this.f,false);//replace
-    //    }
 
     public void find() {
         //creates a JDialog
